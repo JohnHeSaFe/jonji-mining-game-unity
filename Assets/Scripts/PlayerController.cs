@@ -148,8 +148,17 @@ public class PlayerController : MonoBehaviour
     void HandleRemoteTile(byte pid, int tx, int ty)
     {
         if (pid != playerID) return;
-        if (tilemap != null)
-            tilemap.SetTile(new Vector3Int(tx, ty, 0), null);
+        if (tilemap == null) return;
+
+        var cell = new Vector3Int(tx, ty, 0);
+        TileBase tile = tilemap.GetTile(cell);
+
+        // Award points and update mineral counts on THIS machine before removing the tile.
+        // This keeps both GameManagers in sync without needing extra network messages.
+        if (tile != null && GameManager.game != null)
+            GameManager.game.AddPoints((int)pid, tile);
+
+        tilemap.SetTile(cell, null);
     }
 
     // ── Mining ────────────────────────────────────────────────────────────
