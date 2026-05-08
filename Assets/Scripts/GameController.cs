@@ -46,7 +46,11 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (currentState == GameState.Playing)
+        // Clients receive authoritative time from server; only server ticks locally
+        bool isServer = GameNetworkManager.Instance == null ||
+                        GameNetworkManager.Instance.CurrentRole != GameNetworkManager.Role.Client;
+
+        if (currentState == GameState.Playing && isServer)
         {
             currentGameTimer -= Time.deltaTime;
 
@@ -54,9 +58,22 @@ public class GameManager : MonoBehaviour
             {
                 currentGameTimer = 0;
                 currentState = GameState.EndGame;
-
                 SceneManager.LoadScene("EndGameScene");
             }
+        }
+    }
+
+    public void SetNetworkTime(float time, GameState state)
+    {
+        currentGameTimer = time;
+        if (state == GameState.EndGame && currentState != GameState.EndGame)
+        {
+            currentState = GameState.EndGame;
+            SceneManager.LoadScene("EndGameScene");
+        }
+        else
+        {
+            currentState = state;
         }
     }
 
