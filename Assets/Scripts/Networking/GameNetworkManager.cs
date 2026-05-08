@@ -34,6 +34,7 @@ public class GameNetworkManager : MonoBehaviour
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        Application.runInBackground = true;
     }
 
     void OnDestroy()

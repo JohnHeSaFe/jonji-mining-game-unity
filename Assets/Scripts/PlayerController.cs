@@ -124,13 +124,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // ── Remote player: receive state, smooth interpolate ─────────────────
+    // ── Remote player: dead-reckoning + smooth correction ────────────────
 
     void RemoteUpdate()
     {
         if (!_hasRemoteData) return;
-        // Smooth position towards received state
-        transform.position = Vector2.Lerp(transform.position, _remoteTargetPos, Time.deltaTime * 20f);
+        // Extrapolate the target using last known velocity so the ghost keeps
+        // moving between packets instead of freezing until the next one arrives.
+        _remoteTargetPos += _remoteTargetVel * Time.deltaTime;
+        // Snap toward the extrapolated position quickly to hide any drift.
+        transform.position = Vector2.Lerp(transform.position, _remoteTargetPos, Time.deltaTime * 25f);
         UpdateSpriteFromVelocity(_remoteTargetVel.x);
     }
 
