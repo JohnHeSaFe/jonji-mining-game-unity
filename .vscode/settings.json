@@ -66,5 +66,5 @@
     "explorer.fileNesting.patterns": {
         "*.sln": "*.csproj"
     },
-    "dotnet.defaultSolution": "jonji-mining-game-unity.slnx"
+    "dotnet.defaultSolution": "jonji-mining-game-unity.sln"
 }
