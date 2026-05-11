@@ -91,7 +91,12 @@ public class EndGameController : MonoBehaviour
         {
             Destroy(GameManager.game.gameObject);
         }
-        
+
+        if (GameNetworkManager.Instance != null)
+        {
+            GameNetworkManager.Instance.Shutdown();
+        }
+
         SceneManager.LoadScene(0);
     }
 }
