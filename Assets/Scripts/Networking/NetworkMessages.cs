@@ -19,9 +19,10 @@ public static class NetworkMessages
         w.WriteByte((byte)MsgType.ClientReady);
     }
 
-    public static void WriteStartGame(ref Unity.Collections.DataStreamWriter w)
+    public static void WriteStartGame(ref Unity.Collections.DataStreamWriter w, int seed)
     {
         w.WriteByte((byte)MsgType.StartGame);
+        w.WriteInt(seed);
     }
 
     public static void WritePlayerMove(ref Unity.Collections.DataStreamWriter w, byte playerID,

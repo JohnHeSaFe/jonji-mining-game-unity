@@ -33,6 +33,9 @@ public class GeneradorMundo : MonoBehaviour
 
     void Start()
     {
+        if (GameNetworkManager.Instance != null)
+            Random.InitState(GameNetworkManager.Instance.WorldSeed);
+
         GenerarTerreno();
     }
 

@@ -13,6 +13,7 @@ public class GameNetworkManager : MonoBehaviour
 
     public int LocalPlayerID { get; private set; } = -1;
     public bool GameStarted { get; private set; } = false;
+    public int WorldSeed { get; private set; } = 0;
 
     public event Action OnGameStart;
     public event Action<byte, float, float, float, float> OnRemotePlayerMove;
@@ -88,6 +89,7 @@ public class GameNetworkManager : MonoBehaviour
         _isDriverCreated = false;
         CurrentRole = Role.None;
         GameStarted = false;
+        WorldSeed = 0;
     }
 
     // ── Send helpers ────────────────────────────────────────────────────────
@@ -205,11 +207,12 @@ public class GameNetworkManager : MonoBehaviour
 
     void SendStartGameToAll()
     {
+        WorldSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
         GameStarted = true;
         foreach (var conn in _serverConnections)
         {
             _driver.BeginSend(conn, out var w);
-            NetworkMessages.WriteStartGame(ref w);
+            NetworkMessages.WriteStartGame(ref w, WorldSeed);
             _driver.EndSend(w);
         }
         OnGameStart?.Invoke();
@@ -262,6 +265,7 @@ public class GameNetworkManager : MonoBehaviour
         switch (msgType)
         {
             case NetworkMessages.MsgType.StartGame:
+                WorldSeed = stream.ReadInt();
                 GameStarted = true;
                 OnGameStart?.Invoke();
                 SceneManager.LoadScene("CountdownScene");
